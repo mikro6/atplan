@@ -39,7 +39,7 @@ def fetch_plan(did):
     url = f"{PDS_HOST}/xrpc/com.atproto.repo.getRecord"
     params = {
         "repo": did,
-        "collection": "io.mikehacks.plan",
+        "collection": "io.atplan.plan",
         "rkey": "self"
     }
     response = httpx.get(url, params=params)

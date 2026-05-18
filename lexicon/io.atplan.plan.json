@@ -1,6 +1,6 @@
 {
   "lexicon": 1,
-  "id": "io.mikehacks.plan",
+  "id": "io.atplan.plan",
   "defs": {
     "main": {
       "type": "record",

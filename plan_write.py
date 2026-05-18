@@ -19,7 +19,7 @@ def fetch_existing(did):
     url = f"{PDS_HOST}/xrpc/com.atproto.repo.getRecord"
     params = {
         "repo": did,
-        "collection": "io.mikehacks.plan",
+        "collection": "io.atplan.plan",
         "rkey": "self"
     }
     response = httpx.get(url, params=params)
@@ -59,7 +59,7 @@ def publish(client, record):
     response = client.com.atproto.repo.put_record(
         models.ComAtprotoRepoPutRecord.Data(
             repo=client.me.did,
-            collection="io.mikehacks.plan",
+            collection="io.atplan.plan",
             rkey="self",
             record=record
         )
@@ -90,7 +90,7 @@ def main():
     if quick_update and not args.edit:
         # Patch mode — only update what was passed
         record = {
-            "$type": "io.mikehacks.plan",
+            "$type": "io.atplan.plan",
             "displayName": existing.get("displayName", ""),
             "status": existing.get("status", ""),
             "project": existing.get("project", ""),
@@ -119,7 +119,7 @@ def main():
             print("No content entered, aborting.")
             sys.exit(0)
         record = {
-            "$type": "io.mikehacks.plan",
+            "$type": "io.atplan.plan",
             "displayName": existing.get("displayName", ""),
             "status": existing.get("status", ""),
             "project": existing.get("project", ""),
@@ -149,7 +149,7 @@ def main():
             sys.exit(0)
 
         record = {
-            "$type": "io.mikehacks.plan",
+            "$type": "io.atplan.plan",
             "displayName": display_name,
             "status": status,
             "project": project,

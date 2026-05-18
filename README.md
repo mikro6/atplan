@@ -1,7 +1,9 @@
-cat > README.md << 'EOF'
 # atplan
 
 A revival of the Unix `.plan` file tradition for the [ATProto](https://atproto.com) ecosystem.
+
+🌐 [atplan.io](https://atplan.io)
+📦 Lexicon: `io.atplan.plan`
 
 ## What is this?
 
@@ -11,7 +13,7 @@ In the early days of the internet, the `finger` protocol let you query what any 
 
 ## Lexicon
 
-Records are stored under `io.mikehacks.plan` with the key `self`, meaning one plan per user, always updated in place.
+Records are stored under `io.atplan.plan` with the key `self`, meaning one plan per user, always updated in place.
 
 ## Components
 
