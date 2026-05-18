@@ -2,14 +2,11 @@ import os
 import httpx
 from datetime import datetime, timezone
 from dotenv import load_dotenv
-from atproto import Client, models
 from flask import Flask, render_template, request
 
 load_dotenv()
 
 PDS_HOST = os.getenv("PDS_HOST")
-HANDLE = os.getenv("HANDLE")
-APP_PASSWORD = os.getenv("APP_PASSWORD")
 
 app = Flask(__name__)
 
@@ -22,27 +19,26 @@ def format_timestamp(ts):
     except Exception:
         return ts
 
-def get_client():
-    client = Client(base_url=PDS_HOST)
-    client.login(HANDLE, APP_PASSWORD)
-    return client
-
-def resolve_handle(client, handle):
+def resolve_handle(handle):
     if handle.startswith("did:"):
         return handle
-    resolved = client.com.atproto.identity.resolve_handle(
-        models.ComAtprotoIdentityResolveHandle.Params(handle=handle)
+    response = httpx.get(
+        f"{PDS_HOST}/xrpc/com.atproto.identity.resolveHandle",
+        params={"handle": handle}
     )
-    return resolved.did
+    if response.status_code != 200:
+        raise Exception(f"Could not resolve handle: {handle}")
+    return response.json().get("did")
 
 def fetch_plan(did):
-    url = f"{PDS_HOST}/xrpc/com.atproto.repo.getRecord"
-    params = {
-        "repo": did,
-        "collection": "io.atplan.plan",
-        "rkey": "self"
-    }
-    response = httpx.get(url, params=params)
+    response = httpx.get(
+        f"{PDS_HOST}/xrpc/com.atproto.repo.getRecord",
+        params={
+            "repo": did,
+            "collection": "io.atplan.plan",
+            "rkey": "self"
+        }
+    )
     if response.status_code == 200:
         return response.json().get("value", {})
     return None
@@ -54,11 +50,10 @@ def index():
     error = None
 
     if request.method == "POST":
-        handle = request.form.get("handle", "").strip()
+        handle = request.form.get("handle", "").strip().lstrip("@")
         if handle:
             try:
-                client = get_client()
-                did = resolve_handle(client, handle)
+                did = resolve_handle(handle)
                 plan = fetch_plan(did)
                 if not plan:
                     error = f"No .plan found for {handle}"
@@ -74,10 +69,10 @@ def index():
 def finger(handle):
     plan = None
     error = None
+    handle = handle.lstrip("@")
 
     try:
-        client = get_client()
-        did = resolve_handle(client, handle)
+        did = resolve_handle(handle)
         plan = fetch_plan(did)
         if not plan:
             error = f"No .plan found for {handle}"
