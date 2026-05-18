@@ -47,6 +47,21 @@ python3 plan_read.py handle.bsky.social
 python3 app.py
 # then browse to http://localhost:5000
 ```
+## Credentials
+
+The web reader (`app.py`) is fully unauthenticated — it only needs `PDS_HOST` 
+in your environment.
+
+The CLI writer (`plan_write.py`) requires credentials to publish records to 
+your PDS. Your `.env` should contain:
+
+    PDS_HOST=https://your.pds.host
+    HANDLE=you.your.pds.host
+    APP_PASSWORD=your-app-password
+
+Never commit `.env` to version control. It is listed in `.gitignore`.
+If you are deploying the web reader, only `PDS_HOST` is required in your 
+server environment.
 
 ## Web Reader
 
@@ -54,4 +69,3 @@ Direct URL routing:
 
 https://yourserver/finger/handle.bsky.social
 
-EOF
