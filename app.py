@@ -7,6 +7,7 @@ from flask import Flask, render_template, request
 load_dotenv()
 
 PDS_HOST = os.getenv("PDS_HOST")
+OWNER_HANDLE = os.getenv("OWNER_HANDLE")
 
 app = Flask(__name__)
 
@@ -43,46 +44,36 @@ def fetch_plan(did):
         return response.json().get("value", {})
     return None
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    plan = None
-    handle = None
-    error = None
-
-    if request.method == "POST":
-        handle = request.form.get("handle", "").strip().lstrip("@")
-        if handle:
-            try:
-                did = resolve_handle(handle)
-                plan = fetch_plan(did)
-                if not plan:
-                    error = f"No .plan found for {handle}"
-                else:
-                    if plan.get("updatedAt"):
-                        plan["updatedAt"] = format_timestamp(plan["updatedAt"])
-            except Exception as e:
-                error = f"Could not finger {handle}: {e}"
-
-    return render_template("index.html", plan=plan, handle=handle, error=error)
-
-@app.route("/finger/<path:handle>")
-def finger(handle):
-    plan = None
-    error = None
-    handle = handle.lstrip("@")
-
+def get_plan_for_handle(handle):
     try:
         did = resolve_handle(handle)
         plan = fetch_plan(did)
-        if not plan:
-            error = f"No .plan found for {handle}"
-        else:
-            if plan.get("updatedAt"):
-                plan["updatedAt"] = format_timestamp(plan["updatedAt"])
+        if plan and plan.get("updatedAt"):
+            plan["updatedAt"] = format_timestamp(plan["updatedAt"])
+        return plan, handle, None
     except Exception as e:
-        error = f"Could not finger {handle}: {e}"
+        return None, handle, str(e)
 
-    return render_template("index.html", plan=plan, handle=handle, error=error)
+@app.route("/", methods=["GET", "POST"])
+def index():
+    if request.method == "POST":
+        handle = request.form.get("handle", "").strip().lstrip("@")
+        plan, handle, error = get_plan_for_handle(handle) if handle else (None, None, None)
+        return render_template("finger.html", plan=plan, handle=handle, error=error)
+
+    # GET — load landing page with owner's plan as example
+    owner_plan, owner_handle, owner_error = get_plan_for_handle(OWNER_HANDLE)
+    return render_template("landing.html",
+        owner_plan=owner_plan,
+        owner_handle=owner_handle,
+        owner_error=owner_error
+    )
+
+@app.route("/finger/<path:handle>")
+def finger(handle):
+    handle = handle.lstrip("@")
+    plan, handle, error = get_plan_for_handle(handle)
+    return render_template("finger.html", plan=plan, handle=handle, error=error)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

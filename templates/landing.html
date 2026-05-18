@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>atplan(1) - finger for the ATProto ecosystem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            color: #33ff33;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+            padding: 2rem;
+            min-height: 100vh;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .manpage-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            color: #ccffcc;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: #ccffcc;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .section-body {
+            padding-left: 2rem;
+            line-height: 1.8;
+            color: #33ff33;
+        }
+
+        .section-body p {
+            margin-bottom: 0.5rem;
+        }
+
+        .dim {
+            color: #1a8c1a;
+        }
+
+        .synopsis {
+            padding-left: 2rem;
+            color: #ccffcc;
+        }
+
+        .synopsis .command {
+            color: #ccffcc;
+        }
+
+        .synopsis .arg {
+            color: #33ff33;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #1a4d1a;
+            margin: 2rem 0;
+        }
+
+        /* Finger form */
+        .finger-form {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .finger-form label {
+            color: #1a8c1a;
+        }
+
+        .finger-form input {
+            background: #0d0d0d;
+            border: none;
+            border-bottom: 1px solid #33ff33;
+            color: #33ff33;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+            padding: 0.25rem 0.5rem;
+            width: 280px;
+            outline: none;
+        }
+
+        .finger-form input:focus {
+            border-bottom-color: #66ff66;
+        }
+
+        .finger-form button {
+            background: none;
+            border: 1px solid #33ff33;
+            color: #33ff33;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+            padding: 0.25rem 1rem;
+            cursor: pointer;
+        }
+
+        .finger-form button:hover {
+            background: #33ff33;
+            color: #0d0d0d;
+        }
+
+        /* Plan output */
+        .plan-output {
+            border: 1px solid #1a8c1a;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .plan-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #1a8c1a;
+        }
+
+        .plan-header .field {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .plan-header .field .label {
+            color: #1a8c1a;
+            min-width: 80px;
+        }
+
+        .plan-header .field a {
+            color: #33ff33;
+            text-decoration: none;
+        }
+
+        .plan-header .field a:hover {
+            text-decoration: underline;
+        }
+
+        .plan-divider {
+            border: none;
+            border-top: 1px solid #1a8c1a;
+            margin: 1rem 0;
+        }
+
+        .plan-body {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            color: #ccffcc;
+        }
+
+        .error {
+            color: #ff3333;
+            padding-left: 2rem;
+        }
+
+        a {
+            color: #33ff33;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .manpage-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid #1a4d1a;
+            color: #1a4d1a;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="manpage-header">
+        <span>atplan(1)</span>
+        <span>ATProto Utilities</span>
+        <span>atplan(1)</span>
+    </div>
+
+    <div class="section">
+        <div class="section-title">NAME</div>
+        <div class="section-body">
+            <p><span class="dim">atplan</span> - finger for the ATProto ecosystem</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">SYNOPSIS</div>
+        <div class="synopsis">
+            <p><span class="command">finger</span> <span class="arg">&lt;handle&gt;</span></p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">DESCRIPTION</div>
+        <div class="section-body">
+            <p>atplan revives the Unix .plan file tradition for the modern federated web.</p>
+            <p>In the early days of networked computing, the finger(1) protocol let you query
+            what any user on a connected system was up to. Users maintained a .plan file —
+            freeform text describing their current projects, status, and thoughts. It was
+            proto-blogging before blogging existed.</p>
+            <p>atplan brings that tradition to ATProto. Publish your plan as a user-owned
+            record on your own PDS. Finger anyone on the network by handle. Your data.
+            Your server. Your plan.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">EXAMPLES</div>
+        <div class="section-body">
+            <form class="finger-form" method="POST" action="/">
+                <span class="dim">finger</span>
+                <input
+                    type="text"
+                    name="handle"
+                    placeholder="handle.bsky.social"
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+                <button type="submit">return</button>
+            </form>
+
+            {% if owner_plan %}
+                <div class="plan-output">
+                    <div class="plan-header">
+                        {% if owner_plan.displayName %}
+                        <div class="field">
+                            <span class="label">Name:</span>
+                            <span>{{ owner_plan.displayName }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="field">
+                            <span class="label">Handle:</span>
+                            <span>{{ owner_handle }}</span>
+                        </div>
+                        {% if owner_plan.status %}
+                        <div class="field">
+                            <span class="label">Status:</span>
+                            <span>{{ owner_plan.status }}</span>
+                        </div>
+                        {% endif %}
+                        {% if owner_plan.project %}
+                        <div class="field">
+                            <span class="label">Project:</span>
+                            <span>{{ owner_plan.project }}</span>
+                        </div>
+                        {% endif %}
+                        {% if owner_plan.url %}
+                        <div class="field">
+                            <span class="label">URL:</span>
+                            <span><a href="{{ owner_plan.url }}" target="_blank">{{ owner_plan.url }}</a></span>
+                        </div>
+                        {% endif %}
+                        <div class="field">
+                            <span class="label">Updated:</span>
+                            <span>{{ owner_plan.updatedAt }}</span>
+                        </div>
+                    </div>
+                    <hr class="plan-divider">
+                    <div class="plan-body">{{ owner_plan.text }}</div>
+                </div>
+            {% elif owner_error %}
+                <p class="error">{{ owner_error }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">FILES</div>
+        <div class="section-body">
+            <p>~/.plan &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the original. respect.</p>
+            <p>io.atplan.plan &nbsp; the ATProto Lexicon record type</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">GETTING STARTED</div>
+        <div class="section-body">
+            <p>Publish your own .plan from the command line:</p>
+            <br>
+            <p class="dim">$ git clone https://github.com/mikro6/atplan.git</p>
+            <p class="dim">$ cd atplan && python3 -m venv venv && source venv/bin/activate</p>
+            <p class="dim">$ pip install -r requirements.txt</p>
+            <p class="dim">$ cp .env.example .env &nbsp;# edit with your PDS host</p>
+            <p class="dim">$ python3 plan_write.py</p>
+            <br>
+            <p>Full documentation at <a href="https://github.com/mikro6/atplan" target="_blank">github.com/mikro6/atplan</a></p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">HISTORY</div>
+        <div class="section-body">
+            <p>The finger(1) protocol was defined in RFC 742 (1977) and revised in RFC 1288
+            (1991). The .plan file tradition flourished on university VAX and Unix systems
+            throughout the late 1980s and 1990s. Notable practitioners included John Carmack,
+            whose .plan files served as a real-time developer journal during the Doom and
+            Quake era.</p>
+            <p>atplan was built in 2026 as a love letter to that tradition.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">SEE ALSO</div>
+        <div class="section-body">
+            <p>finger(1), atproto(7), <a href="https://atproto.com" target="_blank">atproto.com</a>, <a href="https://bsky.app" target="_blank">bsky.app</a></p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">AUTHORS</div>
+        <div class="section-body">
+            <p>Mike &lt;<a href="https://bsky.app/profile/mike.bsky.mikehacks.io" target="_blank">mike.bsky.mikehacks.io</a>&gt;</p>
+        </div>
+    </div>
+
+    <div class="manpage-footer">
+        <span>atplan(1)</span>
+        <span>atplan.io</span>
+        <span>atplan(1)</span>
+    </div>
+
+</body>
+</html>
