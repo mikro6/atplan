@@ -1,0 +1,47 @@
+{
+  "lexicon": 1,
+  "id": "io.mikehacks.plan",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A user plan record. Inspired by the Unix .plan file tradition.",
+      "key": "literal:self",
+      "record": {
+        "type": "object",
+        "required": ["text", "updatedAt"],
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "maxLength": 64,
+            "description": "Human readable name"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Short availability or mood line"
+          },
+          "project": {
+            "type": "string",
+            "maxLength": 256,
+            "description": "Current project, the .project companion"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 10000,
+            "description": "The freeform .plan body"
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 512,
+            "description": "Optional personal or project URL"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Timestamp of last update"
+          }
+        }
+      }
+    }
+  }
+}

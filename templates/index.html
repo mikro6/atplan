@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>atplan // finger for ATProto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            color: #33ff33;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #33ff33;
+            padding-bottom: 1rem;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            letter-spacing: 0.1em;
+        }
+
+        header p {
+            color: #1a8c1a;
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+
+        .finger-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        .finger-form label {
+            color: #1a8c1a;
+            white-space: nowrap;
+        }
+
+        .finger-form input {
+            background: #0d0d0d;
+            border: none;
+            border-bottom: 1px solid #33ff33;
+            color: #33ff33;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+            padding: 0.25rem 0.5rem;
+            width: 300px;
+            outline: none;
+        }
+
+        .finger-form input:focus {
+            border-bottom-color: #66ff66;
+        }
+
+        .finger-form button {
+            background: none;
+            border: 1px solid #33ff33;
+            color: #33ff33;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+            padding: 0.25rem 1rem;
+            cursor: pointer;
+        }
+
+        .finger-form button:hover {
+            background: #33ff33;
+            color: #0d0d0d;
+        }
+
+        .error {
+            color: #ff3333;
+            margin-bottom: 1rem;
+        }
+
+        .plan-output {
+            border: 1px solid #1a8c1a;
+            padding: 1.5rem;
+            max-width: 800px;
+        }
+
+        .plan-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #1a8c1a;
+        }
+
+        .plan-header .field {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .plan-header .field .label {
+            color: #1a8c1a;
+            min-width: 80px;
+        }
+
+        .plan-header .field .value {
+            color: #33ff33;
+        }
+
+        .plan-header .field a {
+            color: #33ff33;
+            text-decoration: none;
+        }
+
+        .plan-header .field a:hover {
+            text-decoration: underline;
+        }
+
+        .plan-body {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            color: #ccffcc;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #1a8c1a;
+            margin: 1rem 0;
+        }
+
+        .prompt {
+            color: #1a8c1a;
+        }
+
+        footer {
+            margin-top: 3rem;
+            color: #1a4d1a;
+            font-size: 0.8rem;
+            border-top: 1px solid #1a4d1a;
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>atplan</h1>
+        <p>finger for the ATProto ecosystem // inspired by the Unix .plan tradition</p>
+    </header>
+
+    <div class="finger-form-wrapper">
+        <form class="finger-form" method="POST">
+            <span class="prompt">finger</span>
+            <input
+                type="text"
+                name="handle"
+                placeholder="handle.bsky.social"
+                value="{{ handle or '' }}"
+                autofocus
+                autocomplete="off"
+                spellcheck="false"
+            >
+            <button type="submit">return</button>
+        </form>
+    </div>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    {% if plan %}
+        <div class="plan-output">
+            <div class="plan-header">
+                {% if plan.displayName %}
+                <div class="field">
+                    <span class="label">Name:</span>
+                    <span class="value">{{ plan.displayName }}</span>
+                </div>
+                {% endif %}
+                <div class="field">
+                    <span class="label">Handle:</span>
+                    <span class="value">{{ handle }}</span>
+                </div>
+                {% if plan.status %}
+                <div class="field">
+                    <span class="label">Status:</span>
+                    <span class="value">{{ plan.status }}</span>
+                </div>
+                {% endif %}
+                {% if plan.project %}
+                <div class="field">
+                    <span class="label">Project:</span>
+                    <span class="value">{{ plan.project }}</span>
+                </div>
+                {% endif %}
+                {% if plan.url %}
+                <div class="field">
+                    <span class="label">URL:</span>
+                    <span class="value"><a href="{{ plan.url }}" target="_blank">{{ plan.url }}</a></span>
+                </div>
+                {% endif %}
+                <div class="field">
+                    <span class="label">Updated:</span>
+                    <span class="value">{{ plan.updatedAt }}</span>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="plan-body">{{ plan.text }}</div>
+        </div>
+    {% endif %}
+
+    <footer>
+        atplan // ATProto .plan record reader // io.mikehacks.plan
+    </footer>
+
+</body>
+</html>

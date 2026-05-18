@@ -1,0 +1,10 @@
+cd ~/atplan
+cat > .gitignore << 'EOF'
+.env
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+*.log
+EOF
