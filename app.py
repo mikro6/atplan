@@ -7,7 +7,7 @@ from flask import Flask, render_template, request
 load_dotenv()
 
 PDS_HOST = os.getenv("PDS_HOST")
-OWNER_HANDLE = os.getenv("OWNER_HANDLE")
+OWNER_HANDLE = os.getenv("HANDLE")
 
 app = Flask(__name__)
 
