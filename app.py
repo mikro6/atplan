@@ -55,6 +55,8 @@ def get_plan_for_handle(handle):
         plan = fetch_plan(did)
         if plan and plan.get("updatedAt"):
             plan["updatedAt"] = format_timestamp(plan["updatedAt"])
+        if not plan:
+            return None, handle, f"No .plan found for {handle}"
         return plan, handle, None
     except Exception as e:
         return None, handle, str(e)
@@ -63,8 +65,8 @@ def get_plan_for_handle(handle):
 def index():
     if request.method == "POST":
         handle = request.form.get("handle", "").strip().lstrip("@")
-        plan, handle, error = get_plan_for_handle(handle) if handle else (None, None, None)
-        return render_template("finger.html", plan=plan, handle=handle, error=error)
+        if handle:
+            return redirect(url_for("finger", handle=handle))
 
     owner_plan, owner_handle, owner_error = get_plan_for_handle(HANDLE)
     return render_template("landing.html",
