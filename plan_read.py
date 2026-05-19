@@ -3,7 +3,16 @@ import sys
 import httpx
 from dotenv import load_dotenv
 from atproto import Client, models
+from datetime import datetime, timezone
 
+def format_timestamp(ts):
+    try:
+        ts = ts.replace("Z", "+00:00")
+        dt = datetime.fromisoformat(ts)
+        dt = dt.astimezone(timezone.utc)
+        return dt.strftime("%a %b %d %H:%M:%S UTC %Y")
+    except Exception:
+        return ts
 load_dotenv()
 
 PDS_HOST = os.getenv("PDS_HOST")
@@ -53,7 +62,7 @@ else:
         print(f"  Project: {p['project']}")
     if p.get('url'):
         print(f"  URL:     {p['url']}")
-    print(f"  Updated: {p['updatedAt']}")
+    print(f"  Updated: {format_timestamp(p['updatedAt'])}")
     print(f"{'─' * 50}")
     print()
     print(p.get('text', ''))
