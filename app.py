@@ -36,9 +36,23 @@ def resolve_handle(handle):
         raise Exception(f"Could not resolve handle: {handle}")
     return response.json().get("did")
 
+def get_pds_for_did(did):
+    try:
+        if did.startswith("did:plc:"):
+            response = httpx.get(f"https://plc.directory/{did}")
+            if response.status_code == 200:
+                doc = response.json()
+                for service in doc.get("service", []):
+                    if service.get("id") == "#atproto_pds":
+                        return service.get("serviceEndpoint")
+    except Exception:
+        pass
+    return PDS_HOST
+
 def fetch_plan(did):
+    pds = get_pds_for_did(did)
     response = httpx.get(
-        f"{PDS_HOST}/xrpc/com.atproto.repo.getRecord",
+        f"{pds}/xrpc/com.atproto.repo.getRecord",
         params={
             "repo": did,
             "collection": "io.atplan.plan",
