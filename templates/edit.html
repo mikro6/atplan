@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <title>atplan // edit</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background-color: #0d0d0d;
@@ -28,20 +25,10 @@
             padding-bottom: 1rem;
         }
 
-        header h1 {
-            font-size: 1.4rem;
-            letter-spacing: 0.1em;
-        }
+        header h1 { font-size: 1.4rem; letter-spacing: 0.1em; }
+        header p { color: #1a8c1a; margin-top: 0.25rem; font-size: 0.85rem; }
 
-        header p {
-            color: #1a8c1a;
-            margin-top: 0.25rem;
-            font-size: 0.85rem;
-        }
-
-        .field {
-            margin-bottom: 1.5rem;
-        }
+        .field { margin-bottom: 1.5rem; }
 
         .field label {
             display: block;
@@ -63,9 +50,7 @@
         }
 
         .field input:focus,
-        .field textarea:focus {
-            border-bottom-color: #66ff66;
-        }
+        .field textarea:focus { border-bottom-color: #66ff66; }
 
         .field textarea {
             resize: vertical;
@@ -75,14 +60,27 @@
             line-height: 1.6;
         }
 
-        .field textarea:focus {
-            border-color: #66ff66;
+        .field textarea:focus { border-color: #66ff66; }
+
+        .login-form {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 2rem;
         }
 
-        .actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
+        .login-form label { color: #1a8c1a; white-space: nowrap; }
+
+        .login-form input {
+            background: #0d0d0d;
+            border: none;
+            border-bottom: 1px solid #33ff33;
+            color: #33ff33;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+            padding: 0.25rem 0.5rem;
+            width: 280px;
+            outline: none;
         }
 
         button {
@@ -95,7 +93,7 @@
             cursor: pointer;
         }
 
-        button[type="submit"] {
+        button.primary {
             background: #33ff33;
             color: #0d0d0d;
         }
@@ -105,38 +103,14 @@
             color: #0d0d0d;
         }
 
-        a {
-            color: #1a8c1a;
-            text-decoration: none;
-        }
-
-        a:hover {
-            color: #33ff33;
-        }
-
-        .error {
-            color: #ff3333;
-            margin-bottom: 1.5rem;
-        }
-
-        .token-form {
+        .actions {
+            display: flex;
+            gap: 1rem;
             margin-top: 2rem;
         }
 
-        .token-form .field {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .token-form .field label {
-            white-space: nowrap;
-            margin-bottom: 0;
-        }
-
-        .token-form .field input {
-            width: 280px;
-        }
+        .error { color: #ff3333; margin-bottom: 1.5rem; }
+        .dim { color: #1a8c1a; }
 
         footer {
             margin-top: 3rem;
@@ -145,75 +119,201 @@
             border-top: 1px solid #1a4d1a;
             padding-top: 1rem;
         }
+
+        #login-section, #edit-section, #loading-section { display: none; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>atplan // edit</h1>
-        <p>update your .plan</p>
+        <p id="subtitle">update your .plan</p>
     </header>
 
-    {% if error %}
-        <div class="error">{{ error }}</div>
-    {% endif %}
+    <div id="error-msg" class="error" style="display:none"></div>
 
-    {% if not authenticated %}
-        <div class="token-form">
-            <form method="POST" action="/edit">
-                <div class="field">
-                    <label>token:</label>
-                    <input type="password" name="token" autofocus autocomplete="off">
-                    <button type="submit">enter</button>
-                </div>
-            </form>
+    <div id="loading-section">
+        <p class="dim">loading...</p>
+    </div>
+
+    <div id="login-section">
+        <p class="dim">sign in with your ATProto handle to edit your .plan</p>
+        <div class="login-form">
+            <label>handle:</label>
+            <input type="text" id="handle-input"
+                   placeholder="you.bsky.social"
+                   autocomplete="off"
+                   spellcheck="false">
+            <button onclick="login()">sign in</button>
         </div>
+    </div>
 
-    {% else %}
-        <form method="POST" action="/save">
-            <div class="field">
-                <label>status:</label>
-                <input
-                    type="text"
-                    name="status"
-                    value="{{ plan.status if plan and plan.status else '' }}"
-                    maxlength="100"
-                    autocomplete="off"
-                    spellcheck="false"
-                >
-            </div>
+    <div id="edit-section">
+        <p class="dim" id="signed-in-as"></p>
+        <br>
+        <div class="field">
+            <label>status:</label>
+            <input type="text" id="status" maxlength="100"
+                   autocomplete="off" spellcheck="false">
+        </div>
+        <div class="field">
+            <label>project:</label>
+            <input type="text" id="project" maxlength="256"
+                   autocomplete="off" spellcheck="false">
+        </div>
+        <div class="field">
+            <label>plan:</label>
+            <textarea id="plan-text" maxlength="10000"
+                      spellcheck="false"></textarea>
+        </div>
+        <div class="actions">
+            <button class="primary" onclick="savePlan()">save</button>
+            <button onclick="logout()">sign out</button>
+        </div>
+    </div>
 
-            <div class="field">
-                <label>project:</label>
-                <input
-                    type="text"
-                    name="project"
-                    value="{{ plan.project if plan and plan.project else '' }}"
-                    maxlength="256"
-                    autocomplete="off"
-                    spellcheck="false"
-                >
-            </div>
+    <footer>atplan // atplan.io</footer>
 
-            <div class="field">
-                <label>plan:</label>
-                <textarea
-                    name="text"
-                    maxlength="10000"
-                    spellcheck="false"
-                >{{ plan.text if plan and plan.text else '' }}</textarea>
-            </div>
+    <script type="module">
+        import { BrowserOAuthClient } from "https://cdn.jsdelivr.net/npm/@atproto/oauth-client-browser@0.3.14/dist/bundle/index.js";
 
-            <div class="actions">
-                <button type="submit">save</button>
-                <a href="/finger/{{ handle }}"><button type="button">cancel</button></a>
-            </div>
-        </form>
-    {% endif %}
+        const CLIENT_ID = "https://atplan.io/client-metadata.json";
+        const COLLECTION = "io.atplan.plan";
 
-    <footer>
-        atplan // atplan.io
-    </footer>
+        let client, session;
+
+        function showError(msg) {
+            const el = document.getElementById("error-msg");
+            el.textContent = msg;
+            el.style.display = "block";
+        }
+
+        function showSection(id) {
+            ["loading-section", "login-section", "edit-section"].forEach(s => {
+                document.getElementById(s).style.display = s === id ? "block" : "none";
+            });
+        }
+
+        async function fetchExistingPlan(did, pdsUrl) {
+            try {
+                const res = await fetch(
+                    `${pdsUrl}/xrpc/com.atproto.repo.getRecord?repo=${did}&collection=${COLLECTION}&rkey=self`
+                );
+                if (res.ok) {
+                    const data = await res.json();
+                    return data.value || {};
+                }
+            } catch (e) {}
+            return {};
+        }
+
+        async function getPdsForDid(did) {
+            try {
+                const res = await fetch(`https://plc.directory/${did}`);
+                if (res.ok) {
+                    const doc = await res.json();
+                    const svc = doc.service?.find(s => s.id === "#atproto_pds");
+                    if (svc) return svc.serviceEndpoint;
+                }
+            } catch (e) {}
+            return "https://bsky.social";
+        }
+
+        async function loadPlan() {
+            const did = session.did;
+            const pds = await getPdsForDid(did);
+            const plan = await fetchExistingPlan(did, pds);
+
+            document.getElementById("status").value = plan.status || "";
+            document.getElementById("project").value = plan.project || "";
+            document.getElementById("plan-text").value = plan.text || "";
+            document.getElementById("signed-in-as").textContent =
+                `signed in as ${session.handle || did}`;
+
+            showSection("edit-section");
+        }
+
+        window.login = async function() {
+            const handle = document.getElementById("handle-input").value.trim().replace(/^@/, "");
+            if (!handle) return;
+            try {
+                await client.signIn(handle);
+            } catch (e) {
+                showError(`Sign in failed: ${e.message}`);
+            }
+        };
+
+        window.logout = async function() {
+            try {
+                await session.signOut();
+            } catch (e) {}
+            session = null;
+            showSection("login-section");
+        };
+
+        window.savePlan = async function() {
+            const status = document.getElementById("status").value.trim();
+            const project = document.getElementById("project").value.trim();
+            const text = document.getElementById("plan-text").value.trim();
+            const did = session.did;
+            const pds = await getPdsForDid(did);
+
+            const existing = await fetchExistingPlan(did, pds);
+
+            const record = {
+                "$type": COLLECTION,
+                "displayName": existing.displayName || "",
+                "status": status,
+                "project": project,
+                "url": existing.url || "",
+                "text": text,
+                "updatedAt": new Date().toISOString()
+            };
+
+            try {
+                await session.fetchHandler(
+                    `${pds}/xrpc/com.atproto.repo.putRecord`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            repo: did,
+                            collection: COLLECTION,
+                            rkey: "self",
+                            record: record
+                        })
+                    }
+                );
+                const handle = session.handle || did;
+                window.location.href = `/finger/${handle}`;
+            } catch (e) {
+                showError(`Save failed: ${e.message}`);
+            }
+        };
+
+        async function init() {
+            showSection("loading-section");
+            try {
+                client = await BrowserOAuthClient.load({
+                    clientId: CLIENT_ID,
+                    handleResolver: "https://bsky.social"
+                });
+
+                const result = await client.init();
+                if (result?.session) {
+                    session = result.session;
+                    await loadPlan();
+                } else {
+                    showSection("login-section");
+                }
+            } catch (e) {
+                showError(`Init failed: ${e.message}`);
+                showSection("login-section");
+            }
+        }
+
+        init();
+    </script>
 
 </body>
 </html>
