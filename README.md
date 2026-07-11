@@ -20,7 +20,7 @@ To finger anyone's plan, visit [atplan.io/finger/handle](https://atplan.io/finge
 
 Records are stored under `io.atplan.plan` with the key `self`, meaning one plan per user, always updated in place.
 
-** Just want to publish your plan?** Go to [atplan.io/edit](https://atplan.io/edit) — 
+**Just want to publish your plan?** Go to [atplan.io/edit](https://atplan.io/edit) — 
 no setup required. Sign in with your ATProto handle and start writing.
 
 ## Components
